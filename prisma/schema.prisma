@@ -26,5 +26,49 @@ model Org {
 
   created_at DateTime @default(now())
 
+  pets Pet[]
+
   @@map("orgs")
+}
+
+model Pet {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  species            String
+  age                String
+  energy_level       String
+  independence_level String
+  environment        String
+
+  created_at DateTime @default(now())
+
+  orgs   Org    @relation(fields: [org_id], references: [id])
+  org_id String
+
+  pictures     Picture[]
+  requirements Requirement[]
+
+  @@map("pets")
+}
+
+model Picture {
+  id String @id @default(uuid())
+
+  url String
+
+  pets   Pet?    @relation(fields: [pet_id], references: [id])
+  pet_id String?
+}
+
+model Requirement {
+  id String @id @default(uuid())
+
+  title String
+
+  pets   Pet?    @relation(fields: [pet_id], references: [id])
+  pet_id String?
+
+  @@map("requirements")
 }

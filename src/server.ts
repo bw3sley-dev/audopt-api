@@ -13,6 +13,9 @@ import { errorHandler } from "./error-handler";
 
 import { authenticate } from "./http/authenticate";
 import { createOrg } from "./http/create-org";
+import { getOrg } from "./http/get-org";
+import { createPet } from "./http/create-pet";
+import { getPet } from "./http/get-pet";
 
 import { env } from "./env";
 
@@ -56,6 +59,9 @@ app.register(fastifySwagger, {
 
 app.register(authenticate);
 app.register(createOrg);
+app.register(getOrg);
+app.register(createPet);
+app.register(getPet);
 
 app.register(fastifySwaggerUI, {
     routePrefix: "/reference"
@@ -64,4 +70,4 @@ app.register(fastifySwaggerUI, {
 app.listen({
     host: "0.0.0.0",
     port: env.PORT
-}).then(() => console.log(`🔥 HTTP server running at localhost:${env.PORT}`))
+}).then(() => console.log(`🔥 HTTP server running at http://localhost:${env.PORT}`))

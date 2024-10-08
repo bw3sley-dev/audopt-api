@@ -11,7 +11,7 @@ import { hash } from "bcryptjs";
 import { ClientError } from "@/errors/client-error";
 
 export async function createOrg(app: FastifyInstance) {
-    app.withTypeProvider<ZodTypeProvider>().post("/create-org", {
+    app.withTypeProvider<ZodTypeProvider>().post("/orgs", {
         schema: {
             body: z.object({
                 name: z.string(),
