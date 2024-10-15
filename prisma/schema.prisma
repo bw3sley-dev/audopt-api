@@ -14,17 +14,17 @@ model Org {
   id   String @id @default(uuid())
   name String
 
-  owner_name String
-  email      String @unique
-  password   String
-  phone      String
+  ownerName String @map("owner_name")
+  email     String @unique
+  password  String
+  phone     String
 
-  postal_code  String
-  street       String
-  coordinate_x String
-  coordinate_y String
+  postalCode  String @map("postal_code")
+  street      String
+  coordinateX String @map("coordinate_x")
+  coordinateY String @map("coordinate_y")
 
-  created_at DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   pets Pet[]
 
@@ -36,16 +36,17 @@ model Pet {
   name        String
   description String
 
-  species            String
-  age                String
-  energy_level       String
-  independence_level String
-  environment        String
+  species           String
+  age               String
+  energyLevel       String @map("energy_level")
+  independenceLevel String @map("independence_level")
+  environment       String
 
-  created_at DateTime @default(now())
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
 
-  orgs   Org    @relation(fields: [org_id], references: [id])
-  org_id String
+  org   Org    @relation(fields: [orgId], references: [id])
+  orgId String @map("org_id")
 
   pictures     Picture[]
   requirements Requirement[]
@@ -58,8 +59,8 @@ model Picture {
 
   url String
 
-  pets   Pet?    @relation(fields: [pet_id], references: [id])
-  pet_id String?
+  pet   Pet?    @relation(fields: [petId], references: [id])
+  petId String? @map("pet_id")
 }
 
 model Requirement {
@@ -67,8 +68,8 @@ model Requirement {
 
   title String
 
-  pets   Pet?    @relation(fields: [pet_id], references: [id])
-  pet_id String?
+  pet   Pet?    @relation(fields: [petId], references: [id])
+  petId String? @map("pet_id")
 
   @@map("requirements")
 }

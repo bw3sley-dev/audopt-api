@@ -13,10 +13,17 @@ import { compare } from "bcryptjs";
 export async function authenticate(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post("/sessions", {
         schema: {
+            tags: ["Auth"],
+            summary: "Authenticate with e-mail and password",
             body: z.object({
                 email: z.string().email(),
-                password: z.string().min(6, "Field should have 8 digits"),
-            })
+                password: z.string()
+            }),
+            response: {
+                201: z.object({
+                    token: z.string()
+                })
+            }
         }
     }, async (request, reply) => {
         const { email, password } = request.body;
@@ -28,13 +35,13 @@ export async function authenticate(app: FastifyInstance) {
         })
 
         if (!org) {
-            return new ClientError("Invalid credentials");
+            throw new ClientError("Invalid credentials");
         }
 
         const doesPasswordMatch = await compare(password, org.password);
 
         if (!doesPasswordMatch) {
-            return new ClientError("Invalid credentials");
+            throw new ClientError("Invalid credentials");
         }
 
         const token = await reply.jwtSign(
@@ -43,10 +50,12 @@ export async function authenticate(app: FastifyInstance) {
             },
 
             {
-                expiresIn: "7d"
+                sign: {
+                    expiresIn: "7d",
+                },
             }
         )
 
-        return reply.send({ token })
+        return reply.status(201).send({ token })
     })
 }

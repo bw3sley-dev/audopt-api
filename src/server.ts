@@ -7,7 +7,7 @@ import jwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 
-import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler, ZodTypeProvider } from "fastify-type-provider-zod";
 
 import { errorHandler } from "./error-handler";
 
@@ -19,7 +19,7 @@ import { getPet } from "./http/get-pet";
 
 import { env } from "./env";
 
-const app = fastify();
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -34,21 +34,14 @@ app.register(cors, {
     origin: "*",
 })
 
-app.register(jwt, {
-    secret: env.JWT_SECRET,
-
-    cookie: {
-        cookieName: "auth",
-        signed: false
-    }
-})
+app.register(jwt, { secret: env.JWT_SECRET });
 
 app.register(fastifySwagger, {
     openapi: {
         info: {
-            title: "",
-            description: "",
-            version: ""
+            title: "audopt",
+            description: "Audopt API streamlines pet adoption, connecting shelters and adopters with secure access to pet profiles and adoption requirements.",
+            version: "1.0.0"
         },
 
         servers: []

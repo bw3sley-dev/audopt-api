@@ -13,20 +13,27 @@ import { ClientError } from "@/errors/client-error";
 export async function createOrg(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post("/orgs", {
         schema: {
+            tags: ["Auth"],
+            summary: "Create a new organization/account",
             body: z.object({
                 name: z.string(),
-                owner_name: z.string(),
+                ownerName: z.string(),
                 email: z.string().email(),
                 password: z.string().min(8, "Field should have 8 digits"),
                 phone: z.string(),
-                postal_code: z.string().min(8, "Field should have 8 digits").max(8, "Field should have 8 digits"),
+                postalCode: z.string().min(8, "Field should have 8 digits").max(8, "Field should have 8 digits"),
                 street: z.string(),
-                coordinate_x: z.string(),
-                coordinate_y: z.string()
-            })
+                coordinateX: z.string(),
+                coordinateY: z.string()
+            }),
+            response: {
+                201: z.object({
+                    orgId: z.string()
+                })
+            }
         }
     }, async (request, reply) => {
-        const { name, owner_name, email, password, phone, postal_code, street, coordinate_x, coordinate_y } = request.body;
+        const { name, ownerName, email, password, phone, postalCode, street, coordinateX, coordinateY } = request.body;
 
         const doesOrgExist = await prisma.org.findUnique({
             where: {
@@ -35,7 +42,7 @@ export async function createOrg(app: FastifyInstance) {
         })
 
         if (doesOrgExist) {
-            return new ClientError("Organization already exists.");
+            throw new ClientError("Organization already exists.");
         }
 
         const hashedPassword = await hash(password, 6);
@@ -43,17 +50,17 @@ export async function createOrg(app: FastifyInstance) {
         const org = await prisma.org.create({
             data: {
                 name,
-                owner_name,
+                ownerName,
                 email,
                 password: hashedPassword,
                 phone,
-                postal_code,
+                postalCode,
                 street,
-                coordinate_x,
-                coordinate_y
+                coordinateX,
+                coordinateY
             }
         })
 
-        return reply.status(201).send({ org_id: org.id })
+        return reply.status(201).send({ orgId: org.id })
     })
 }
