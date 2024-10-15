@@ -40,7 +40,7 @@ app.register(fastifySwagger, {
     openapi: {
         info: {
             title: "audopt",
-            description: "Audopt API streamlines pet adoption, connecting shelters and adopters with secure access to pet profiles and adoption requirements.",
+            description: "",
             version: "1.0.0"
         },
 
